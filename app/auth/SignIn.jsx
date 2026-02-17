@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,14 +8,46 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     Platform,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import { router } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../service/FirebaseConfig';
+import { useConvex } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { UserContext } from '../../context/UserContext';
 
 export default function SignIn() {
-    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const convex=useConvex()
+    const { user, setuser } = useContext(UserContext)
+
+
+    //login user logic
+    const handleLogin = () => {
+
+        if (!email || !password) {
+            Alert.alert('Fill the fields')
+            return
+        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then( async(userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                const userData=await convex.query(api.Users.GetUser,{
+                    email:email
+                })
+                console.log('login resx',userData)
+                setuser(userData)
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log('erroer',error.message)
+            });
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -62,7 +94,9 @@ export default function SignIn() {
                         />
                     </View>
 
-                    <TouchableOpacity style={styles.signUpButton}>
+                    <TouchableOpacity style={styles.signUpButton}
+                        onPress={() => handleLogin()}
+                    >
                         <Text style={styles.signUpButtonText}>Log In</Text>
                     </TouchableOpacity>
                 </View>

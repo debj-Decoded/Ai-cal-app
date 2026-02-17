@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { router } from 'expo-router';
 import {
     StyleSheet,
@@ -9,13 +9,83 @@ import {
     SafeAreaView,
     KeyboardAvoidingView,
     Platform,
-    Image
+    Image,
+    Alert
 } from 'react-native';
-router
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../service/FirebaseConfig';
+import { api } from '../../convex/_generated/api';
+import { UserContext } from '../../context/UserContext';
+import { useMutation } from "convex/react";
+
 export default function SignUp() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { user, setuser } = useContext(UserContext)
+    // const [loading, setLoading] = useState(false); // Added loading state
+
+    const createNewUser=useMutation(api.Users.CreateNewUser)
+
+    // signup function to firebase
+    const handleSignUp = () => {
+        if (!name || !email || !password) {
+            Alert.alert("Fill all fields");
+            return;
+        }
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                console.log(user)
+                if (user) { 
+                    const result= await createNewUser({
+                        name:name,
+                        email:email
+                    });
+                    console.log(result)
+                    setuser(result)
+                }
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log("errorx", errorMessage, process.env.EXPO_PUBLIC_FIREBASE_API_KEY)
+                // console.log("errorx",  process.env.EXPO_PUBLIC_FIREBASE_API_KEY)
+                // ..
+            });
+    };
+
+    
+    // const handleSignUp = async () => {
+    //     if (!name || !email || !password) {
+    //         Alert.alert("Error", "Please fill all fields");
+    //         return;
+    //     }
+
+    //     setLoading(true);
+    //     try {
+    //         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    //         const firebaseUser = userCredential.user;
+
+    //         if (firebaseUser) {
+    //             const result = await createNewUser({
+    //                 name: name,
+    //                 email: email
+    //             });
+                
+    //             setuser(result);
+    //             // Navigate after success
+    //             router.replace('/(tabs)/home'); 
+    //         }
+    //     } catch (error) {
+    //         console.log("Sign up error:", error.code, error.message);
+    //         Alert.alert("Signup Failed", error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -41,7 +111,7 @@ export default function SignUp() {
                         <Text style={styles.label}>Full Name</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="John Doe"
+                            // placeholder="John Doe"
                             value={name}
                             onChangeText={setName}
                         />
@@ -51,7 +121,7 @@ export default function SignUp() {
                         <Text style={styles.label}>Email Address</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="hello@nutripal.com"
+                            // placeholder="hello@nutripal.com"
                             keyboardType="email-address"
                             autoCapitalize="none"
                             value={email}
@@ -63,14 +133,18 @@ export default function SignUp() {
                         <Text style={styles.label}>Password</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="••••••••"
+                            // placeholder="••••••••"
                             secureTextEntry
                             value={password}
                             onChangeText={setPassword}
                         />
                     </View>
 
-                    <TouchableOpacity style={styles.signUpButton}>
+                    <TouchableOpacity
+                        style={styles.signUpButton}
+                        onPress={() => handleSignUp()}
+                    >
+
                         <Text style={styles.signUpButtonText}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
@@ -93,13 +167,13 @@ export default function SignUp() {
                 </View>
 
                 <TouchableOpacity style={styles.footerLink}
-                
-                     onPress={() => router.push('/auth/SignIn')}  
+
+                    onPress={() => router.push('/auth/SignIn')}
                 >
                     <Text style={styles.footerText}>
                         Already have an account? <Text style={styles.linkBold}>
-                           
-                             
+
+
                             Login</Text>
                     </Text>
                 </TouchableOpacity>
@@ -119,7 +193,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     headerSection: {
-        marginTop:10,
+        marginTop: 10,
         alignItems: 'center',
         marginBottom: 40,
     },
@@ -207,7 +281,7 @@ const styles = StyleSheet.create({
     },
     footerLink: {
         marginTop: 15,
-        marginBottom:5,
+        marginBottom: 5,
         alignItems: 'center',
     },
     footerText: {
