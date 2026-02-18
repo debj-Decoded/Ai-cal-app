@@ -19,7 +19,10 @@ export default function AIRecipePage() {
     const [ingredients, setIngredients] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [recipe, setRecipe] = useState(null);
-const router=useRouter()
+    const router = useRouter()
+
+
+
     const handleGenerate = async () => {
         if (!ingredients.trim()) return alert("Please enter some ingredients first!");
 
@@ -31,11 +34,9 @@ const router=useRouter()
             const AIres = (result.choices[0].message.content).replace('```json', '').replace('```', '')
             const parseJSONres = JSON.parse(AIres);
             console.log(parseJSONres)
-           setRecipe(parseJSONres)
-
-
-
+            setRecipe(parseJSONres)
             //  ends
+            
         } catch (error) {
             console.log(error)
         }
@@ -66,7 +67,7 @@ const router=useRouter()
                     {/* Header */}
                     <View style={styles.header}>
                         <TouchableOpacity style={styles.backButton}
-                        onPress={()=>router.push('/Home')}
+                            onPress={() => router.push('/Home')}
                         >
                             <Text style={{ color: '#FFF' }}>←</Text>
                         </TouchableOpacity>
@@ -111,22 +112,22 @@ const router=useRouter()
                     </View>
 
                     {/* Recipe Result */}
-                  {recipe && !isGenerating && recipe.map((e, index) => (
-    <View key={index} style={styles.resultCard}>
-        <Text style={styles.resultTag}>AI SUGGESTION</Text>
-        <Text style={styles.recipeTitle}>{e.recipeName}</Text>
-        <Text style={styles.recipeDesc}>{e.Description}</Text>
+                    {recipe && !isGenerating && recipe.map((e, index) => (
+                        <View key={index} style={styles.resultCard}>
+                            <Text style={styles.resultTag}>AI SUGGESTION</Text>
+                            <Text style={styles.recipeTitle}>{e.recipeName}</Text>
+                            <Text style={styles.recipeDesc}>{e.Description}</Text>
 
-        <View style={styles.statsRow}>
-            <View style={styles.statBox}><Text>🔥 {e.ingredients[0]},{e.ingredients[1]}</Text></View>
-            <View style={styles.statBox}><Text>⏱️ {e.cookingTime.prepTime}</Text></View>
-        </View>
+                            <View style={styles.statsRow}>
+                                <View style={styles.statBox}><Text>🔥 {e.ingredients[0]},{e.ingredients[1]}</Text></View>
+                                <View style={styles.statBox}><Text>⏱️ {e.cookingTime.prepTime}</Text></View>
+                            </View>
 
-        <TouchableOpacity style={styles.logBtn}>
-            <Text style={styles.logBtnText}>Add to Daily Log</Text>
-        </TouchableOpacity>
-    </View>
-))}
+                            <TouchableOpacity style={styles.logBtn}>
+                                <Text style={styles.logBtnText}>Add to Daily Log</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
 
                 </ScrollView>
             </KeyboardAvoidingView>
