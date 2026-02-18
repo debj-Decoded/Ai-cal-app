@@ -14,12 +14,14 @@ import {
 import { GenerateRecipeOptionsAiModel } from '../../service/AiModel';
 import Prompt from '../../service/Prompt';
 import { useRouter } from 'expo-router';
+import LoadingDialog from '../component/LoadingDialog';
 
 export default function AIRecipePage() {
     const [ingredients, setIngredients] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [recipe, setRecipe] = useState(null);
     const router = useRouter()
+    const [isLoad, setisLoad] = useState(false)
 
 
 
@@ -36,7 +38,7 @@ export default function AIRecipePage() {
             console.log(parseJSONres)
             setRecipe(parseJSONres)
             //  ends
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -56,8 +58,27 @@ export default function AIRecipePage() {
         // }, 2000);
     };
 
+    const onRecipeOptionSelected = async (item) => {
+        // console.log("onRecipeOptionSelected",item)
+        try {
+            
+        setisLoad(true)
+        const PROMPT = "RecipeName:" + item.recipeName + " Description:" + item.Description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT
+        // console.log("recipeName",PROMPT)
+
+        const result = await GenerateRecipeOptionsAiModel(PROMPT);
+        const extractJson = (result.choices[0].message.content).replace('```json', '').replace('```', '')
+        const parsedJSON = JSON.parse(extractJson)
+        console.log('parsedJSON', parsedJSON)
+        setisLoad(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
+
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
@@ -123,14 +144,17 @@ export default function AIRecipePage() {
                                 <View style={styles.statBox}><Text>⏱️ {e.cookingTime.prepTime}</Text></View>
                             </View>
 
-                            <TouchableOpacity style={styles.logBtn}>
+                            <TouchableOpacity style={styles.logBtn}
+                                onPress={() => onRecipeOptionSelected(e)}>
                                 <Text style={styles.logBtnText}>Add to Daily Log</Text>
                             </TouchableOpacity>
                         </View>
+                        
                     ))}
-
                 </ScrollView>
+
             </KeyboardAvoidingView>
+            <LoadingDialog isLoading={isLoad}/>
         </SafeAreaView>
     );
 }
