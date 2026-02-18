@@ -12,6 +12,15 @@ const openai = new OpenAI({
     messages: [
       { role: "user", content: PROMPT }
     ],
+        response_format:"json_object"
+  })
+  
+  export const GenerateRecipeOptionsAiModel = async(PROMPT)=> await openai.chat.completions.create({
+    model: "google/gemma-3-4b-it:free",
+    messages: [
+      { role: "user", content: PROMPT }
+    ],
+    response_format:"json_object"
   })
 
 //   console.log(completion.choices[0].message)

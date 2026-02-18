@@ -1,57 +1,30 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions
+import React from 'react';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  SafeAreaView, 
+  TouchableOpacity, 
+  ScrollView, 
+  Dimensions 
 } from 'react-native';
-
-import React, { useContext, useEffect } from 'react'
-import { UserContext } from '../../context/UserContext'
-import { useRouter } from 'expo-router'
-import { useRoute } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-export default function Home() {
-
-
-
-  const { user } = useContext(UserContext)
-  const router = useRouter()
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  console.log(formattedDate)
-
- 
-
-
-  useEffect(() => {
-
-    if (!user?.weight) {
-      router.replace('/preference')
-    }
-  }, [user])
-
-  // const consumed = 1500;
-  // const goal = user?.calories;
-  // const progress = (consumed / goal) * 100;
+export default function StylishHomeScreen() {
+  const consumed = 1500;
+  const goal = 2000;
+  const progress = (consumed / goal) * 100;
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
+        
         {/* Modern Header */}
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>Hello,</Text>
-            <Text style={styles.userName}>{user?.name}</Text>
+            <Text style={styles.userName}>Tubeguruji</Text>
           </View>
           <TouchableOpacity style={styles.profileBadge}>
             <Text style={styles.avatarEmoji}>🧘‍♂️</Text>
@@ -64,19 +37,18 @@ export default function Home() {
             <View style={styles.tag}>
               <Text style={styles.tagText}>Today's Goal</Text>
             </View>
-            <Text style={styles.date}>{formattedDate}</Text>
+            <Text style={styles.date}>April 16, 2025</Text>
           </View>
 
-          <View style={styles.caloriesInfo}>
-            <Text style={styles.mainNumber}>1500</Text>
+          <View style={styles.calorieInfo}>
+            <Text style={styles.mainNumber}>{consumed}</Text>
             <Text style={styles.separator}>/</Text>
-            <Text style={styles.goalNumber}>{user?.calories} <Text style={styles.unit}>kCal</Text></Text>
+            <Text style={styles.goalNumber}>{goal} <Text style={styles.unit}>kCal</Text></Text>
           </View>
 
           <View style={styles.progressContainer}>
             <View style={styles.fullBar}>
-              <View style={[styles.activeBar, { width: (1500 / user?.calories) * 100 + '%' }]} />
-              {/* <View style={[styles.activeBar, { width: `${progress}%` }]} /> */}
+              <View style={[styles.activeBar, { width: `${progress}%` }]} />
             </View>
             <View style={styles.barLabels}>
               <Text style={styles.barLabelText}>Consumed</Text>
@@ -88,16 +60,14 @@ export default function Home() {
         {/* AI Action Card */}
         <View style={[styles.glassCard, styles.aiCard]}>
           <View style={styles.aiIconWrapper}>
-            <Text style={{ fontSize: 24 }}>🤖</Text>
+            <Text style={{fontSize: 24}}>🤖</Text>
           </View>
           <Text style={styles.aiTitle}>Need a Meal Idea?</Text>
           <Text style={styles.aiSubtext}>
-            Our AI analyzes your remaining <Text style={{ fontWeight: '700' }}>{user?.calories - 1500} kCal</Text> to suggest the perfect recipe.
+            Our AI analyzes your remaining <Text style={{fontWeight: '700'}}>{goal - consumed} kCal</Text> to suggest the perfect recipe.
           </Text>
-
-          <TouchableOpacity style={styles.primaryBtn}
-            onPress={()=>router.push('/generate-ai-recipe')}
-          >
+          
+          <TouchableOpacity style={styles.primaryBtn}>
             <Text style={styles.btnText}>Generate with AI</Text>
           </TouchableOpacity>
         </View>
@@ -110,13 +80,13 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FDFDFD' },
   scrollContent: { padding: 24 },
-
+  
   // Header Styling
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  header: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
     alignItems: 'center',
-    marginBottom: 32
+    marginBottom: 32 
   },
   greeting: { fontSize: 16, color: '#A0A0A0', fontWeight: '500' },
   userName: { fontSize: 26, fontWeight: '800', color: '#1A1A1A' },
@@ -148,8 +118,8 @@ const styles = StyleSheet.create({
   tagText: { color: '#F4A261', fontWeight: '700', fontSize: 12, textTransform: 'uppercase' },
   date: { color: '#C0C0C0', fontSize: 13, fontWeight: '600' },
 
-  // calories Layout
-  caloriesInfo: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', marginVertical: 3 },
+  // Calorie Layout
+  calorieInfo: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', marginVertical: 10 },
   mainNumber: { fontSize: 48, fontWeight: '900', color: '#1A1A1A' },
   separator: { fontSize: 28, color: '#E0E0E0', marginHorizontal: 10 },
   goalNumber: { fontSize: 24, fontWeight: '600', color: '#A0A0A0' },
@@ -165,9 +135,9 @@ const styles = StyleSheet.create({
 
   // AI Card Specifics
   aiCard: { backgroundColor: '#1A1A1A', paddingBottom: 30 },
-  aiIconWrapper: {
-    width: 50, height: 50, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.1)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: 15
+  aiIconWrapper: { 
+    width: 50, height: 50, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.1)', 
+    justifyContent: 'center', alignItems: 'center', marginBottom: 15 
   },
   aiTitle: { fontSize: 22, fontWeight: '700', color: '#FFF', marginBottom: 8 },
   aiSubtext: { fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 22, marginBottom: 25 },

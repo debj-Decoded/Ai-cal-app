@@ -62,7 +62,7 @@ export default function Preference() {
         let JSONContent;
         try {
             JSONContent = JSON.parse(cleaned);
-            console.log('resulfinal',JSONContent);
+            console.log('resulfinal', JSONContent);
         } catch (err) {
             console.error("Failed to parse AI response as JSON:", err);
             console.error("Raw content was:", cleaned);
@@ -89,6 +89,7 @@ export default function Preference() {
             onPress={() => setGender(label)}
         >
             <Text style={[styles.genderIcon, gender === label && styles.selectedText]}>{icon}</Text>
+            {/* <Text style={[styles.genderIcon, gender === label ? styles.selectedTextMale : styles.selectedText]}>{icon}</Text> */}
             <Text style={[styles.genderLabel, gender === label && styles.selectedText]}>{label}</Text>
         </TouchableOpacity>
     );
@@ -135,9 +136,9 @@ export default function Preference() {
                 {/* Gender Selection */}
                 <Text style={styles.sectionTitle}>Gender</Text>
                 <View style={styles.row}>
-                    <GenderCard label="Male" icon="♂" />
-                    <GenderCard label="Female" icon="♀" />
-                    <GenderCard label="Other" icon="⚥" />
+                    <GenderCard label="Male" icon="♂️" />
+                    <GenderCard label="Female" icon="♀️" />
+                    <GenderCard label="Other" icon="⚧️" />
                 </View>
 
                 {/* Goal Selection */}
@@ -208,6 +209,8 @@ const styles = StyleSheet.create({
     genderIcon: { fontSize: 24, marginBottom: 5, color: '#888' },
     genderLabel: { fontSize: 14, fontWeight: '600', color: '#888' },
     selectedText: { color: '#F4A261' },
+    selectedTextMale: { color: '#6192f4' },
+    selectedTextFemale: { color: '#d54bc5' },
 
     goalItem: {
         flexDirection: 'row',
