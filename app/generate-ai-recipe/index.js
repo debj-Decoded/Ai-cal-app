@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     StyleSheet,
     Text,
@@ -11,21 +11,28 @@ import {
     KeyboardAvoidingView,
     Platform
 } from 'react-native';
-import { GenerateRecipeOptionsAiModel } from '../../service/AiModel';
+import { AiImageGenerate, GenerateRecipeOptionsAiModel } from '../../service/AiModel';
 import Prompt from '../../service/Prompt';
 import { useRouter } from 'expo-router';
 import LoadingDialog from '../component/LoadingDialog';
+import { api } from '../../convex/_generated/api';
+import { useMutation } from 'convex/react';
+import { UserContext } from '../../context/UserContext';
+
 
 export default function AIRecipePage() {
+
+
     const [ingredients, setIngredients] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [recipe, setRecipe] = useState(null);
     const router = useRouter()
     const [isLoad, setisLoad] = useState(false)
 
+    const CreateRecipe=useMutation(api.Recipes.CreateRecipe)
+    const {user}=useContext(UserContext)
 
-
-    const handleGenerate = async () => {
+    const handleGenerate = async () => { //for handelind create 3 recipe
         if (!ingredients.trim()) return alert("Please enter some ingredients first!");
 
         setIsGenerating(true);
@@ -58,7 +65,7 @@ export default function AIRecipePage() {
         // }, 2000);
     };
 
-    const onRecipeOptionSelected = async (item) => {
+    const onRecipeOptionSelected = async (item) => { //for handeling recipe full detail
         // console.log("onRecipeOptionSelected",item)
         try {
             
@@ -70,7 +77,27 @@ export default function AIRecipePage() {
         const extractJson = (result.choices[0].message.content).replace('```json', '').replace('```', '')
         const parsedJSON = JSON.parse(extractJson)
         console.log('parsedJSON', parsedJSON)
+
+        const AiRecipeImage= "https://firebasestorage.googleapis.com/v0/b/projects-2025-71366.firebasestorage.app/o/ai-guru-lab-images%2F1771521760818.png?alt=media&token=fee0dbe6-b5e1-4897-9256-0b28a9b6a202"//image hardcoded
+        // const AiRecipeImage= await AiImageGenerate(parsedJSON?.imagePrompt)//for handeling recipe image full detail
+        // console.log("imagePrompt",AiRecipeImage)
+        // console.log("imagePrompt",AiRecipeImage?.data?.image);
+
+        //save to database
+        const saveRecipeResult=await CreateRecipe({
+            jsonData:parsedJSON,
+            // imageUrl:AiRecipeImage?.data?.image,
+            imageUrl:AiRecipeImage,//hardcoded
+            recipeName:parsedJSON?.recipeName,
+            uid:user?._id
+        })
+
+        console.log("fsaveRecipeResultt",saveRecipeResult)
         setisLoad(false)
+        router.push({
+            pathname:'/recipe-details',
+            recipeId:saveRecipeResult
+        })
         } catch (error) {
             console.log(error)
         }
@@ -146,7 +173,7 @@ export default function AIRecipePage() {
 
                             <TouchableOpacity style={styles.logBtn}
                                 onPress={() => onRecipeOptionSelected(e)}>
-                                <Text style={styles.logBtnText}>Add to Daily Log</Text>
+                                <Text style={styles.logBtnText}>View Recipe</Text>
                             </TouchableOpacity>
                         </View>
                         

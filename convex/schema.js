@@ -14,5 +14,11 @@ export default defineSchema({
         gender:v.optional(v.string()),
         calories:v.optional(v.number()),
         protien:v.optional(v.number()),
+    }),
+    recipes:defineTable({
+        jsonData:v.any(),
+        uid:v.id('users'),
+        imageUrl:v.optional(v.string()),
+        recipeName:v.any()
     })
 })
