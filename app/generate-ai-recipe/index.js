@@ -34,7 +34,7 @@ export default function AIRecipePage() {
 
     const handleGenerate = async () => { //for handelind create 3 recipe
         if (!ingredients.trim()) return alert("Please enter some ingredients first!");
-
+        router.push('/recipe-details')
         setIsGenerating(true);
         try {
             //AI generate with formating the AI response 
@@ -42,7 +42,7 @@ export default function AIRecipePage() {
             const result = await GenerateRecipeOptionsAiModel(PROMPT)
             const AIres = (result.choices[0].message.content).replace('```json', '').replace('```', '')
             const parseJSONres = JSON.parse(AIres);
-            console.log(parseJSONres)
+            console.log("for handelind create 3 recipe",parseJSONres)
             setRecipe(parseJSONres)
             //  ends
 

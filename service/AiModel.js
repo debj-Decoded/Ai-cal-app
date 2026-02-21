@@ -8,7 +8,8 @@ const openai = new OpenAI({
 
 
 export const CalculateCaloriesAI = async (PROMPT) => await openai.chat.completions.create({
-  model: "google/gemma-3-4b-it:free",
+  // model: "google/gemma-3-4b-it:free",
+  model: "google/gemma-3-12b-it:free",
   messages: [
     { role: "user", content: PROMPT }
   ],
@@ -16,7 +17,8 @@ export const CalculateCaloriesAI = async (PROMPT) => await openai.chat.completio
 })
 
 export const GenerateRecipeOptionsAiModel = async (PROMPT) => await openai.chat.completions.create({
-  model: "google/gemma-3-4b-it:free",
+  // model: "google/gemma-3-4b-it:free",
+  model: "google/gemma-3-12b-it:free",
   messages: [
     { role: "user", content: PROMPT }
   ],
