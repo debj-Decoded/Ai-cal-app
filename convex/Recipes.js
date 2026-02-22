@@ -19,12 +19,13 @@ export const CreateRecipe = mutation({
     }
 })
 
-export const GetRecipeById=query({
-    args:{
-        id:v.id('recipes')
+export const GetRecipeById = query({
+    args: {
+        id: v.id('recipes')
     },
-    handler:async(ctx,args)=>{
-        const result=await ctx.db.get(args.id)
+    handler: async (ctx, args) => {
+        const result = await ctx.db.get(args.id)
         return result
     }
 })
+

@@ -77,8 +77,8 @@ export default function Preference() {
             ...data
         }))
 
-        router.replace('/(tabs)/Home')
         console.log('gender', gender, goal, height, weight)
+        router.replace('/(tabs)/Home')
 
     }
 

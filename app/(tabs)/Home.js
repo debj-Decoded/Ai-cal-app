@@ -12,12 +12,12 @@ import React, { useContext, useEffect } from 'react'
 import { UserContext } from '../../context/UserContext'
 import { useRouter } from 'expo-router'
 import { useRoute } from '@react-navigation/native';
-
+import TodayMealPlan from '../component/TodayMealPlan';
+import { useConvex } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import moment from 'moment';
 const { width } = Dimensions.get('window');
-
 export default function Home() {
-
-
 
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -28,8 +28,26 @@ export default function Home() {
     day: 'numeric',
   });
   console.log(formattedDate)
+  const convex = useConvex()
 
- 
+  useEffect(() => {
+    if (user) {
+      // GetTotalCaloriesConsumed();
+      // console.log("calorieCount",result)
+    }
+  }, [user])
+
+
+  // const GetTotalCaloriesConsumed = async () => {
+  //   const result = await convex.query(api.MealPlan.GetTotalCaloriesConsumed, {
+  //     date: moment().format('ddd DD'),
+  //     uid: user?._id
+  //   })
+
+  //   console.log("calorieCount",result)
+  // }
+
+
 
 
   useEffect(() => {
@@ -96,11 +114,12 @@ export default function Home() {
           </Text>
 
           <TouchableOpacity style={styles.primaryBtn}
-            onPress={()=>router.push('/generate-ai-recipe')}
+            onPress={() => router.push('/generate-ai-recipe')}
           >
             <Text style={styles.btnText}>Generate with AI</Text>
           </TouchableOpacity>
         </View>
+        <TodayMealPlan />
 
       </ScrollView>
     </SafeAreaView>

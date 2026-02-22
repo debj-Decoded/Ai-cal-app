@@ -34,7 +34,7 @@ export default function AIRecipePage() {
 
     const handleGenerate = async () => { //for handelind create 3 recipe
         if (!ingredients.trim()) return alert("Please enter some ingredients first!");
-        router.push('/recipe-details')
+        // router.push('/recipe-details')
         setIsGenerating(true);
         try {
             //AI generate with formating the AI response 
