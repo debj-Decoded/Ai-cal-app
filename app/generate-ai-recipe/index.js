@@ -29,8 +29,8 @@ export default function AIRecipePage() {
     const router = useRouter()
     const [isLoad, setisLoad] = useState(false)
 
-    const CreateRecipe=useMutation(api.Recipes.CreateRecipe)
-    const {user}=useContext(UserContext)
+    const CreateRecipe = useMutation(api.Recipes.CreateRecipe)
+    const { user } = useContext(UserContext)
 
     const handleGenerate = async () => { //for handelind create 3 recipe
         if (!ingredients.trim()) return alert("Please enter some ingredients first!");
@@ -42,7 +42,7 @@ export default function AIRecipePage() {
             const result = await GenerateRecipeOptionsAiModel(PROMPT)
             const AIres = (result.choices[0].message.content).replace('```json', '').replace('```', '')
             const parseJSONres = JSON.parse(AIres);
-            console.log("for handelind create 3 recipe",parseJSONres)
+            console.log("for handelind create 3 recipe", parseJSONres)
             setRecipe(parseJSONres)
             //  ends
 
@@ -68,36 +68,38 @@ export default function AIRecipePage() {
     const onRecipeOptionSelected = async (item) => { //for handeling recipe full detail
         // console.log("onRecipeOptionSelected",item)
         try {
-            
-        setisLoad(true)
-        const PROMPT = "RecipeName:" + item.recipeName + " Description:" + item.Description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT
-        // console.log("recipeName",PROMPT)
 
-        const result = await GenerateRecipeOptionsAiModel(PROMPT);
-        const extractJson = (result.choices[0].message.content).replace('```json', '').replace('```', '')
-        const parsedJSON = JSON.parse(extractJson)
-        console.log('parsedJSON', parsedJSON)
+            setisLoad(true)
+            const PROMPT = "RecipeName:" + item.recipeName + " Description:" + item.Description + Prompt.GENERATE_COMPLETE_RECIPE_PROMPT
+            // console.log("recipeName",PROMPT)
 
-        const AiRecipeImage= "https://firebasestorage.googleapis.com/v0/b/projects-2025-71366.firebasestorage.app/o/ai-guru-lab-images%2F1771521760818.png?alt=media&token=fee0dbe6-b5e1-4897-9256-0b28a9b6a202"//image hardcoded
-        // const AiRecipeImage= await AiImageGenerate(parsedJSON?.imagePrompt)//for handeling recipe image full detail
-        // console.log("imagePrompt",AiRecipeImage)
-        // console.log("imagePrompt",AiRecipeImage?.data?.image);
+            const result = await GenerateRecipeOptionsAiModel(PROMPT);
+            const extractJson = (result.choices[0].message.content).replace('```json', '').replace('```', '')
+            const parsedJSON = JSON.parse(extractJson)
+            console.log('parsedJSON', parsedJSON)
 
-        //save to database
-        const saveRecipeResult=await CreateRecipe({
-            jsonData:parsedJSON,
-            // imageUrl:AiRecipeImage?.data?.image,
-            imageUrl:AiRecipeImage,//hardcoded
-            recipeName:parsedJSON?.recipeName,
-            uid:user?._id
-        })
+            const AiRecipeImage = "https://firebasestorage.googleapis.com/v0/b/projects-2025-71366.firebasestorage.app/o/ai-guru-lab-images%2F1771521760818.png?alt=media&token=fee0dbe6-b5e1-4897-9256-0b28a9b6a202"//image hardcoded
+            // const AiRecipeImage= await AiImageGenerate(parsedJSON?.imagePrompt)//for handeling recipe image full detail
+            // console.log("imagePrompt",AiRecipeImage)
+            // console.log("imagePrompt",AiRecipeImage?.data?.image);
 
-        console.log("fsaveRecipeResultt",saveRecipeResult)
-        setisLoad(false)
-        router.push({
-            pathname:'/recipe-details',
-            recipeId:saveRecipeResult
-        })
+            //save to database
+            const saveRecipeResult = await CreateRecipe({
+                jsonData: parsedJSON,
+                // imageUrl:AiRecipeImage?.data?.image,
+                imageUrl: AiRecipeImage,//hardcoded
+                recipeName: parsedJSON?.recipeName,
+                uid: user?._id
+            })
+
+            console.log("fsaveRecipeResultt", saveRecipeResult)
+            setisLoad(false)
+            router.push({
+                pathname: '/recipe-details',
+                // recipeId: saveRecipeResult
+                params: { recipeId: saveRecipeResult }
+
+            })
         } catch (error) {
             console.log(error)
         }
@@ -176,12 +178,12 @@ export default function AIRecipePage() {
                                 <Text style={styles.logBtnText}>View Recipe</Text>
                             </TouchableOpacity>
                         </View>
-                        
+
                     ))}
                 </ScrollView>
 
             </KeyboardAvoidingView>
-            <LoadingDialog isLoading={isLoad}/>
+            <LoadingDialog isLoading={isLoad} />
         </SafeAreaView>
     );
 }

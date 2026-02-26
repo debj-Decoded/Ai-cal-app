@@ -75,7 +75,9 @@ export const GetTotalCaloriesConsumed = query({
             .filter(q =>
                 q.and(
                     q.eq(q.field('userId'), args.uid),
-                    q.eq(q.field('date'), args.date)
+                    q.eq(q.field('date'), args.date),
+                     q.eq(q.field('status'), true)   // ✅ only include checked meals
+
                 )
             )
             .collect();

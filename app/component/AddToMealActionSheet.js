@@ -58,6 +58,7 @@ const AddToMealActionSheet = ({recipeDetils}) => {
       recipeId:recipeDetils?._id,
       userId:user?._id
     })
+     Alert.alert("Great!", "Status Updated")
     console.log("recipeDetils",recipeDetils?._id)
     console.log("result",result)
   }

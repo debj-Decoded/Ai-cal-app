@@ -22,7 +22,8 @@ export const CreateNewUser = mutation({
             const result = await ctx.db.insert('users', {
                 ...data
             });
-            return data
+            // return data
+            return await ctx.db.get(result);
         }
         return user[0];
     }
@@ -45,27 +46,28 @@ export const GetUser = query({
 
 
 
-export const UpdateUserPref=mutation({
+export const UpdateUserPref = mutation({
 
-    args:{
-        uid:v.id('users'),
-        height:v.string(),
-        weight:v.string(),
-        gender:v.string(),
-        goal:v.string(),
-        calories:v.optional(v.number()),
-        protien:v.optional(v.number()),
+    args: {
+        uid: v.id('users'),
+        height: v.string(),
+        weight: v.string(),
+        gender: v.string(),
+        goal: v.string(),
+        calories: v.optional(v.number()),
+        // calories: v.optional(v.float64()),
+        protein: v.optional(v.number()),
     },
-    handler:async(ctx,args)=>{
-         const result=await ctx.db.patch(args.uid,{
-            height:args.height,
-            weight:args.weight,
-            goal:args.goal,
-            gender:args.gender,
-            protien:args.protien,
-            calories:args.calories,
+    handler: async (ctx, args) => {
+        const result = await ctx.db.patch(args.uid, {
+            height: args.height,
+            weight: args.weight,
+            goal: args.goal,
+            gender: args.gender,
+            protein: args.protein,
+            calories: args.calories,
 
-         });
-         return result
+        });
+        return result
     }
 })

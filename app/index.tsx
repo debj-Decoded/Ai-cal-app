@@ -7,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { useConvex } from "convex/react";
 import { useContext, useEffect } from "react";
 import { UserContext } from "@/context/UserContext";
-import { router, useRouter } from "expo-router";
+import { useRouter } from 'expo-router';
 
 
 
@@ -15,27 +15,31 @@ export default function Index() {
 
   const { user, setuser } = useContext(UserContext)
   const convex = useConvex()
-  // const router =useRouter
+  const router = useRouter()
   useEffect(() => {
-   const unsubscribe = onAuthStateChanged(auth, async (userInfo) => {
+    const unsubscribe = onAuthStateChanged(auth, async (userInfo) => {
       console.log("ussseerr", userInfo?.email);
       if (userInfo?.email) {
+
         const userData = await convex.query(api.Users.GetUser, {
           email: userInfo.email,
         });
-        console.log("user_data", userData);
+        if(!userData){
+          
+        }
+        console.log("user_datasx", userData);
         setuser(userData);
 
         router.replace('/(tabs)/Home')
       }
     });
 
-  return ()=>unsubscribe();
-   
-  }, [])
-  
+    return () => unsubscribe();
 
-  
+  }, [])
+
+
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -78,7 +82,7 @@ export default function Index() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/auth/SignUp')}   // 👈 navigate to /home
+          onPress={() => router.push('/auth/SignUp')}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>

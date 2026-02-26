@@ -7,13 +7,13 @@ import {
     TouchableOpacity,
     SafeAreaView,
     ScrollView,
-    Alert
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 
 import { useMutation } from 'convex/react'
 import { api } from './../../convex/_generated/api';
 import { UserContext } from '../../context/UserContext'
-// import {UserContext} from './../../context/UserContext'
 import { useRouter } from 'expo-router';
 import { CalculateCaloriesAI } from '../../service/AiModel';
 import Prompt from '../../service/Prompt';
@@ -25,7 +25,6 @@ export default function Preference() {
     const [goal, setGoal] = useState('Lose Weight');
     const [height, setHeight] = useState();
     const [weight, setWeight] = useState();
-
     const { user, setuser } = useContext(UserContext)
     const UpdateUserPref = useMutation(api.Users.UpdateUserPref)
     const router = useRouter()
@@ -161,12 +160,14 @@ export default function Preference() {
                     icon="💪"
                     color="#FFF2E5"
                 />
+              
+                    <TouchableOpacity style={styles.continueButton}
+                        onPress={() => handleData()}
+                    >
+                        <Text style={styles.continueButtonText}>Continue</Text>
+                    </TouchableOpacity>
+             
 
-                <TouchableOpacity style={styles.continueButton}
-                    onPress={() => handleData()}
-                >
-                    <Text style={styles.continueButtonText}>Continue</Text>
-                </TouchableOpacity>
 
             </ScrollView>
         </SafeAreaView>

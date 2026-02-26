@@ -20,19 +20,23 @@ const { width } = Dimensions.get('window');
 export default function RecipeDetailPage() {
 
   const router = useRouter()
+
   const { recipeId } = useLocalSearchParams();
-  console.log('recipeId', recipeId) //jd72nt14jjgqk3pta8nfcy9vxs81fa3h
+  console.log("Passed ID:", recipeId);
 
   const recipeDetils = useQuery(api.Recipes.GetRecipeById, {
-    id: recipeId == undefined && 'jd7b4j3wqw9yw0nh70wer3dsvx81ecgb'
+    id: recipeId ?? 'jd7a5p1xm0k70drrpt1bpm3tt581w6d1'
+    // id: recipeId ?? 'jd7b4j3wqw9yw0nh70wer3dsvx81ecgb'
   });
 
+
   const actionSheetRef = useRef(null);
-  console.log("recipeDetils", recipeDetils)
-  console.log("recipeDetilsURL", recipeDetils?.imageUrl)
-  console.log("recipeDetilsDetail", recipeDetils?.jsonData?.imagePrompt)
-  console.log("recipeDetilsDetail", recipeDetils?.jsonData?.imagePrompt)
+  // console.log("recipeDetils", recipeDetils)
+  // console.log("recipeDetilsURL", recipeDetils?.imageUrl)
+  // console.log("recipeDetilsDetail", recipeDetils?.jsonData?.imagePrompt)
+  console.log("ingredient", recipeDetils?.jsonData?.description)
   console.log("ingredient", recipeDetils?.jsonData?.ingredients)
+  console.log("steps", recipeDetils?.jsonData?.steps)
 
   // const GetRecipeDetail=
 
@@ -67,7 +71,7 @@ export default function RecipeDetailPage() {
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconCircle}
-        onPress={() => actionSheetRef.current?.show()}
+          onPress={() => actionSheetRef.current?.show()}
         >
           <Text style={styles.backIcon}>+ ADD</Text>
         </TouchableOpacity>
@@ -76,8 +80,10 @@ export default function RecipeDetailPage() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* 1. Recipe Intro */}
         <View style={styles.imagePlaceholder}>
-          <Text style={styles.imageEmoji}>🥗</Text>
-          {/* Replace with <Image source={{uri: '...'}} style={styles.recipeImage} /> */}
+          {!recipeDetils?.imageUrl ?(
+            <Text style={styles.imageEmoji}>🥗</Text> ):(
+            <Image source={{ uri: recipeDetils?.imageUrl }} style={styles.recipeImage} />)
+          }
         </View>
 
         <View style={styles.contentContainer}>
@@ -134,7 +140,7 @@ export default function RecipeDetailPage() {
             <Text style={styles.doneButtonText}>Add This To Meal! 🍳</Text>
           </TouchableOpacity>
           <ActionSheet gestureEnabled ref={actionSheetRef}>
-            <AddToMealActionSheet  recipeDetils={recipeDetils}/>
+            <AddToMealActionSheet recipeDetils={recipeDetils} />
           </ActionSheet>
         </View>
       </ScrollView>

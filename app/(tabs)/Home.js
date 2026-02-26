@@ -5,10 +5,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
-  Dimensions
+  Dimensions,
+  Animated
 } from 'react-native';
 
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { UserContext } from '../../context/UserContext'
 import { useRouter } from 'expo-router'
 import { useRoute } from '@react-navigation/native';
@@ -16,7 +17,11 @@ import TodayMealPlan from '../component/TodayMealPlan';
 import { useConvex } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import moment from 'moment';
+import { LinearGradient } from 'expo-linear-gradient';
 const { width } = Dimensions.get('window');
+import { MotiView } from 'moti';
+import { useQuery } from "convex/react";
+
 export default function Home() {
 
   const { user } = useContext(UserContext)
@@ -29,13 +34,29 @@ export default function Home() {
   });
   console.log(formattedDate)
   const convex = useConvex()
+  const [yourCalorie, setYourCalories] = useState(0)
 
   useEffect(() => {
-    if (user) {
-      // GetTotalCaloriesConsumed();
-      // console.log("calorieCount",result)
+    console.log("chekinbg User Daww",user)
+    if (!user?.weight) {
+      router.replace('/preference')
     }
   }, [user])
+
+
+  const totalCalories = useQuery(api.MealPlan.GetTotalCaloriesConsumed, {
+    date: moment().format('ddd DD'),
+    uid: user?._id
+  });
+ useEffect(() => {
+    if (user) {
+      console.log("firstUser", user);
+      console.log("calorieCountHomeComponent", totalCalories);
+      setYourCalories(totalCalories)
+    }
+  }, [user, totalCalories]);
+
+
 
 
   // const GetTotalCaloriesConsumed = async () => {
@@ -43,23 +64,17 @@ export default function Home() {
   //     date: moment().format('ddd DD'),
   //     uid: user?._id
   //   })
-
-  //   console.log("calorieCount",result)
+  //   setYourCalories(result)
+  //   console.log("calorieCountHomeComponent", result)
+  //   console.log("calorieCountHomeComponent", result)
+  //   console.log("calorieCountHomeComponent", result)
   // }
 
-
-
-
-  useEffect(() => {
-
-    if (!user?.weight) {
-      router.replace('/preference')
-    }
-  }, [user])
 
   // const consumed = 1500;
   // const goal = user?.calories;
   // const progress = (consumed / goal) * 100;
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,9 +101,9 @@ export default function Home() {
           </View>
 
           <View style={styles.caloriesInfo}>
-            <Text style={styles.mainNumber}>1500</Text>
+            <Text style={styles.mainNumber}>{user?.calories}</Text>
             <Text style={styles.separator}>/</Text>
-            <Text style={styles.goalNumber}>{user?.calories} <Text style={styles.unit}>kCal</Text></Text>
+            <Text style={styles.goalNumber}>{yourCalorie} <Text style={styles.unit}>kCal</Text></Text>
           </View>
 
           <View style={styles.progressContainer}>
@@ -104,9 +119,35 @@ export default function Home() {
         </View>
 
         {/* AI Action Card */}
-        <View style={[styles.glassCard, styles.aiCard]}>
+        {/* AI Animation Card */}
+
+        <MotiView
+          from={{
+            borderColor: 'rgba(244, 162, 97, 0.3)',
+            shadowRadius: 20,   // start with a tighter glow
+            shadowColor: 'rgba(244,162,97,0.4)',
+          }}
+
+
+          animate={{
+            borderColor: 'rgba(97, 244, 156, 0.8)', // bright greenish glow
+            shadowRadius: 120,  // expand glow massively
+            shadowColor: 'rgba(97,244,156,0.9)',
+          }}
+
+
+          transition={{
+            type: 'timing',
+            duration: 2000,
+            loop: true,
+            repeatReverse: true,
+          }}
+          style={[styles.glassCard, styles.aiCard]}
+        >
+
+          {/* <View style={[styles.glassCard, styles.aiCard]}> */}
           <View style={styles.aiIconWrapper}>
-            <Text style={{ fontSize: 24 }}>🤖</Text>
+            <Text style={{ fontSize: 20 }}>🤖</Text>
           </View>
           <Text style={styles.aiTitle}>Need a Meal Idea?</Text>
           <Text style={styles.aiSubtext}>
@@ -118,7 +159,10 @@ export default function Home() {
           >
             <Text style={styles.btnText}>Generate with AI</Text>
           </TouchableOpacity>
-        </View>
+          {/* </View> */}
+
+        </MotiView>
+
         <TodayMealPlan />
 
       </ScrollView>
@@ -155,7 +199,7 @@ const styles = StyleSheet.create({
   glassCard: {
     backgroundColor: '#FFF',
     borderRadius: 30,
-    padding: 24,
+    padding: 15,
     marginBottom: 20,
     boxShadow: '0px 15px 35px rgba(0,0,0,0.05)',
     elevation: 5,
@@ -183,19 +227,47 @@ const styles = StyleSheet.create({
   barLabelHighlight: { fontSize: 13, color: '#F4A261', fontWeight: '700' },
 
   // AI Card Specifics
-  aiCard: { backgroundColor: '#1A1A1A', paddingBottom: 30 },
-  aiIconWrapper: {
-    width: 50, height: 50, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.1)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: 15
+  // AI Card Animation
+
+
+  aiCard: {
+    backgroundColor: '#1A1A1A',
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    borderRadius: 18,
+    borderWidth: 1.5, // The border that will animate
+    // Shadow for the "Glow" effect
+    shadowColor: '#F4A261',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 15,
+    elevation: 10,
   },
-  aiTitle: { fontSize: 22, fontWeight: '700', color: '#FFF', marginBottom: 8 },
-  aiSubtext: { fontSize: 15, color: 'rgba(255,255,255,0.6)', lineHeight: 22, marginBottom: 25 },
+  aiIconWrapper: {
+    width: 30,
+    height: 30, borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  aiTitle: {
+    fontSize: 17,
+    fontWeight: '700', color: '#FFF',
+    marginBottom: 6
+  },
+
+  aiSubtext: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.6)',
+    lineHeight: 20,
+    marginBottom: 18
+  },
   primaryBtn: {
     backgroundColor: '#F4A261',
-    paddingVertical: 16,
-    borderRadius: 18,
+    paddingVertical: 12,
+    borderRadius: 14,
     alignItems: 'center',
     boxShadow: '0px 10px 20px rgba(244, 162, 97, 0.3)',
   },
-  btnText: { color: '#FFF', fontSize: 16, fontWeight: '800' }
+  btnText: { color: '#FFF', fontSize: 15, fontWeight: '800' }
 });
