@@ -12,13 +12,13 @@ import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { UserContext } from '../../context/UserContext';
 
-const AddToMealActionSheet = ({recipeDetils}) => {
+const AddToMealActionSheet = ({ recipeDetils }) => {
   const [dateList, setDateList] = useState([])
   const [selectedDate, setSelectedDate] = useState(moment().format('ddd DD'));
   const [selectedMeal, setSelectedMeal] = useState('Lunch');
 
-  const CreateMealPlan=useMutation(api.MealPlan.CreateMealPlan)
-  const {user}=useContext(UserContext)
+  const CreateMealPlan = useMutation(api.MealPlan.CreateMealPlan)
+  const { user } = useContext(UserContext)
   // const dates = [
   //   { day: 'Wed', date: '16', month: 'Apr' },
   //   { day: 'Thu', date: '17', month: 'Apr' },
@@ -35,6 +35,7 @@ const AddToMealActionSheet = ({recipeDetils}) => {
   useEffect(() => {
     GenerateDates()
   }, [])
+
   const GenerateDates = () => {
     const result = [];
 
@@ -47,20 +48,20 @@ const AddToMealActionSheet = ({recipeDetils}) => {
 
   }
 
-  const handleAddMeal= async()=>{
-    if(!selectedMeal && !selectedDate){
+  const handleAddMeal = async () => {
+    if (!selectedMeal && !selectedDate) {
       Alert.alert("Please select all details")
       return;
     }
-    const result=await CreateMealPlan({
-      date:selectedDate,
-      mealType:selectedMeal,
-      recipeId:recipeDetils?._id,
-      userId:user?._id
+    const result = await CreateMealPlan({
+      date: selectedDate,
+      mealType: selectedMeal,
+      recipeId: recipeDetils?._id,
+      userId: user?._id
     })
-     Alert.alert("Great!", "Status Updated")
-    console.log("recipeDetils",recipeDetils?._id)
-    console.log("result",result)
+    Alert.alert("Great!", "Status Updated")
+    console.log("recipeDetils", recipeDetils?._id)
+    console.log("result", result)
   }
 
   return (
@@ -107,8 +108,8 @@ const AddToMealActionSheet = ({recipeDetils}) => {
         </View>
 
         {/* Confirm Button */}
-        <TouchableOpacity style={styles.confirmButton}  
-        onPress={()=>handleAddMeal()}
+        <TouchableOpacity style={styles.confirmButton}
+          onPress={() => handleAddMeal()}
         >
           <Text style={styles.confirmText}>+ Add to Meal Plan</Text>
         </TouchableOpacity>

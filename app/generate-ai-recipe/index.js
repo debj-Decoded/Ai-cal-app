@@ -66,7 +66,7 @@ export default function AIRecipePage() {
     };
 
     const onRecipeOptionSelected = async (item) => { //for handeling recipe full detail
-        // console.log("onRecipeOptionSelected",item)
+        console.log("onRecipeOptionSelected",item)
         try {
 
             setisLoad(true)
@@ -75,6 +75,7 @@ export default function AIRecipePage() {
 
             const result = await GenerateRecipeOptionsAiModel(PROMPT);
             const extractJson = (result.choices[0].message.content).replace('```json', '').replace('```', '')
+           
             const parsedJSON = JSON.parse(extractJson)
             console.log('parsedJSON', parsedJSON)
 
@@ -117,7 +118,7 @@ export default function AIRecipePage() {
                     {/* Header */}
                     <View style={styles.header}>
                         <TouchableOpacity style={styles.backButton}
-                            onPress={() => router.push('/Home')}
+                            onPress={() => router.back()}
                         >
                             <Text style={{ color: '#FFF' }}>←</Text>
                         </TouchableOpacity>

@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import moment from "moment";
+
 
 export const CreateMealPlan = mutation({
     args: {
@@ -89,3 +91,66 @@ export const GetTotalCaloriesConsumed = query({
         return totalCalories
     }
 })
+
+
+function formatDateToDB(date) {
+  return moment(date).format("ddd DD"); // e.g. "Mon 23"
+}
+
+export const GetWeeklyCaloriesConsumed = query({
+  args: {
+    uid: v.id("users"),
+    weekStart: v.string(), // e.g. "Mon 23"
+  },
+  handler: async (ctx, args) => {
+    const startDate = moment(args.weekStart, "ddd DD");
+
+    const days = Array.from({ length: 7 }, (_, i) =>
+      formatDateToDB(startDate.clone().add(i, "days"))
+    );
+
+    const results = await Promise.all(
+      days.map(async (date) => {
+        const meals = await ctx.db.query("mealPlan")
+          .filter(q =>
+            q.and(
+              q.eq(q.field("userId"), args.uid),
+              q.eq(q.field("date"), date),
+              q.eq(q.field("status"), true)
+            )
+          )
+          .collect();
+
+        const total = meals.reduce(
+          (sum, meal) => sum + (meal.calories ? parseFloat(meal.calories) : 0),
+          0
+        );
+        return { date, total };
+      })
+    );
+    
+
+    return results; // [{date:"Mon 23", total:450}, ...]
+  },
+});
+
+
+
+export const GetMealsHistory=query({
+  args: {
+   uid: v.id("users"),
+    // date: v.string(), // e.g. "Thu 26"
+  },
+  handler: async (ctx, args) => {
+    const meals = await ctx.db.query("mealPlan")
+      .filter(q =>
+        // q.and(
+          q.eq(q.field("userId"), args.uid),
+        //   q.eq(q.field("date"), args.date)
+        // )
+      )
+      .collect();
+
+    return meals; // returns all meal documents for that date
+  },
+});

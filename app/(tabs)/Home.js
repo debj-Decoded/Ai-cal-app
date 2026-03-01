@@ -32,12 +32,17 @@ export default function Home() {
     month: 'long',
     day: 'numeric',
   });
+
+  const progressAnim = useRef(new Animated.Value(0)).current;
+
+
   console.log(formattedDate)
   const convex = useConvex()
   const [yourCalorie, setYourCalories] = useState(0)
-
+  const [waterCount, setWaterCount] = useState(0); // Add this with your other states
+  
   useEffect(() => {
-    console.log("chekinbg User Daww",user)
+    console.log("chekinbg User Daww", user)
     if (!user?.weight) {
       router.replace('/preference')
     }
@@ -48,14 +53,34 @@ export default function Home() {
     date: moment().format('ddd DD'),
     uid: user?._id
   });
- useEffect(() => {
+
+  const targetWidth = (yourCalorie / user?.calories) * 100;
+
+  useEffect(() => {
     if (user) {
       console.log("firstUser", user);
       console.log("calorieCountHomeComponent", totalCalories);
       setYourCalories(totalCalories)
     }
+
+
   }, [user, totalCalories]);
 
+
+
+
+  //animation bar
+  useEffect(() => {
+    if (user?.calories && yourCalorie >= 0) {
+      const targetWidth = Math.min((yourCalorie / user.calories) * 100, 100); // clamp to 100%
+
+      Animated.timing(progressAnim, {
+        toValue: targetWidth,
+        duration: 1000,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [yourCalorie, user?.calories]);
 
 
 
@@ -108,8 +133,20 @@ export default function Home() {
 
           <View style={styles.progressContainer}>
             <View style={styles.fullBar}>
-              <View style={[styles.activeBar, { width: (1500 / user?.calories) * 100 + '%' }]} />
-              {/* <View style={[styles.activeBar, { width: `${progress}%` }]} /> */}
+              {/* <View style={[styles.activeBar, { width: (yourCalorie / user?.calories) * 100 + '%' }]} /> */}
+              {/* View style={[styles.activeBar, { width: `${progress}%` }]} /> */}
+              <Animated.View
+                style={[
+                  styles.activeBar,
+                  {
+                    width: progressAnim.interpolate({
+                      inputRange: [0, 100],
+                      outputRange: ['0%', '100%'],
+                    })
+                  }
+                ]}
+              />
+
             </View>
             <View style={styles.barLabels}>
               <Text style={styles.barLabelText}>Consumed</Text>
@@ -118,6 +155,41 @@ export default function Home() {
           </View>
         </View>
 
+        {/* water daily intake */}
+
+        <View style={[styles.glassCard, { paddingVertical: 15 }]}>
+          <View style={styles.waterHeader}>
+            <View style={styles.waterInfo}>
+              <Text style={styles.waterTitle}>Hydration</Text>
+              <Text style={styles.waterSub}>{waterCount * 250}ml / 2L</Text>
+            </View>
+
+            <View style={styles.waterControls}>
+              <TouchableOpacity
+                onPress={() => setWaterCount(Math.max(0, waterCount - 1))}
+                style={styles.stepBtn}
+              >
+                <Text style={styles.stepText}>-</Text>
+              </TouchableOpacity>
+
+              <View style={styles.glassRow}>
+                {[...Array(8)].map((_, i) => (
+                  <View
+                    key={i}
+                    style={[styles.miniGlass, i < waterCount && styles.activeGlass]}
+                  />
+                ))}
+              </View>
+
+              <TouchableOpacity
+                onPress={() => setWaterCount(Math.min(8, waterCount + 1))}
+                style={[styles.stepBtn, { backgroundColor: '#2196F3' }]}
+              >
+                <Text style={[styles.stepText, { color: '#FFF' }]}>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
         {/* AI Action Card */}
         {/* AI Animation Card */}
 
@@ -226,6 +298,69 @@ const styles = StyleSheet.create({
   barLabelText: { fontSize: 13, color: '#A0A0A0', fontWeight: '500' },
   barLabelHighlight: { fontSize: 13, color: '#F4A261', fontWeight: '700' },
 
+
+
+  //water intake 
+
+  waterHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  waterInfo: {
+    flex: 1,
+  },
+  waterTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1A1A1A',
+  },
+  waterSub: {
+    fontSize: 12,
+    color: '#2196F3',
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  waterControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  glassRow: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  miniGlass: {
+  width: 10,
+  height: 18,
+  backgroundColor: '#E3F2FD',
+  borderColor: '#BBDEFB',
+  borderWidth: 0.7,
+
+  borderTopLeftRadius: 2,
+  borderTopRightRadius: 2,
+  borderBottomLeftRadius: 6,
+  borderBottomRightRadius: 6,
+},
+  activeGlass: {
+    backgroundColor: '#2196F3',
+    borderColor: '#95f321',
+  },
+  stepBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EEE',
+  },
+  stepText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+  },
   // AI Card Specifics
   // AI Card Animation
 

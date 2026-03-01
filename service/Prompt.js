@@ -1,14 +1,14 @@
 export default {
-    CALORIES_PROMPT: `Based on Weight,Height,Gender,Goal give me calories and proteins need daily Consider Age as 28 in JSON format and follow the schema:
+  CALORIES_PROMPT: `Based on Weight,Height,Gender,Goal give me calories and proteins need daily Consider Age as 28 in JSON format and follow the schema:
     {
     calories:<>,
     protein:<>
     }
     `,
 
-    GENERATE_RECIPE_OPTION_PROMPT: `:Depends on user instruction create 3 different Recipe variant with Recipe Name and Emoji, 2 line description and main ingredient list , cooking time in JSON format with field recipeName, Description, ingredients (without size) only ,Do not give me text response`,
+  GENERATE_RECIPE_OPTION_PROMPT: `:Depends on user instruction create 3 different Recipe variant with Recipe Name and Emoji, 2 line description and main ingredient list , cooking time in JSON format with field recipeName, Description, ingredients (without size) only ,Do not give me text response`,
 
-    GENERATE_COMPLETE_RECIPE_PROMPT: `
+  GENERATE_COMPLETE_RECIPE_PROMPT: `
     -As per recipeName and description give me recipeName and Description on as field , Give me all list of ingredients as ingredient,
     -emoji icons for each ingredient as icon, quantity as quantity, along with detail step by step  recipe steps
     -total calories as calories (only  number), Minutes to cook as cookTime and serving number as ServeTo
@@ -37,10 +37,20 @@ export default {
         
        
     }
-    
-    `,
 
-    GENERATE_COMPLETE_RECIPE_PROMPT2: `
+
+    
+
+    Return ONLY valid JSON.
+- All keys must be double-quoted.
+- All string values must be double-quoted.
+- No comments, no markdown, no code fences.
+
+    `
+
+  ,
+
+  GENERATE_COMPLETE_RECIPE_PROMPT2: `
 You are an AI recipe generator. 
 Based on the given recipeName and description, return a complete recipe object in JSON format ONLY. 
 Do not include any explanations, comments, or text outside of the JSON.

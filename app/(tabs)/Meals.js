@@ -52,7 +52,7 @@ export default function Meals() {
     }}
   >
 
-    <TouchableOpacity style={styles.recipeCard}>
+    <TouchableOpacity>
       <View style={styles.imageContainer}>
         {/* <Text style={styles.recipeEmoji}>{item.emoji}</Text> */}
         <Image source={{ uri: item.imageUrl }} style={styles.recipeEmoji} />

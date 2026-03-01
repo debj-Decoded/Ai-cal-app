@@ -67,7 +67,7 @@ export default function RecipeDetailPage() {
       {/* Fixed Header */}
       <View style={styles.navHeader}>
         <TouchableOpacity style={styles.iconCircle}
-          onPress={() => router.push('/generate-ai-recipe')}>
+          onPress={() => router.back()}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconCircle}
@@ -80,7 +80,8 @@ export default function RecipeDetailPage() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* 1. Recipe Intro */}
         <View style={styles.imagePlaceholder}>
-          {!recipeDetils?.imageUrl ?(
+          {recipeDetils?.imageUrl ?(//default to imoji image generation limit
+          // {!recipeDetils?.imageUrl ?(
             <Text style={styles.imageEmoji}>🥗</Text> ):(
             <Image source={{ uri: recipeDetils?.imageUrl }} style={styles.recipeImage} />)
           }

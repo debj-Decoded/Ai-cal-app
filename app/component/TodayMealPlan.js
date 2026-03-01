@@ -18,7 +18,6 @@ export default function TodayMealPlan() {
 
     useEffect(() => {
         if (user) {
-
             GetTodayMealPlan();
         }
 
